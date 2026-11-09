@@ -1,0 +1,39 @@
+<!-- Put at the end of <body>, after the pre-rendered markup. The page paints with no script, so the framework, the app
+     bundle and fonts the first screen doesn't use are only requested after the first paint. Requested earlier, they share a
+     slow connection with the LCP image and push it back (Lighthouse mobile: LCP 2.1-2.2 s -> 1.5-1.6 s, score 98-99 -> 100).
+     Edit SCRIPTS; the last one's onload calls window.__boot(), which hydrates. Bump ?v= when a file changes (or use hashed names). -->
+<template id="late-fonts"><style>
+/* @font-face rules for fonts nothing in the first screen uses (scripts/subset_fonts.py LATE writes these) */
+</style></template>
+<script>
+(function () {
+  var SCRIPTS = ['/vendor/react.production.min.js?v=18.3.1', '/vendor/react-dom.production.min.js?v=18.3.1', '/app.js?v=00000000'];
+  var started = false, PO = window.PerformanceObserver, root = document.getElementById('root');
+  function start() {
+    if (started) return;
+    started = true;
+    setTimeout(function () {
+      var late = document.getElementById('late-fonts');
+      if (late) document.head.appendChild(late.content.cloneNode(true));
+      SCRIPTS.forEach(function (src, i) {
+        var s = document.createElement('script');
+        s.src = src; s.async = false; // keep execution order
+        if (i === SCRIPTS.length - 1) s.onload = function () { window.__boot && window.__boot(); };
+        document.body.appendChild(s);
+      });
+    }, 0);
+  }
+  if (!root || !root.firstElementChild) start(); // nothing pre-rendered to paint: start now
+  else if (PO && PO.supportedEntryTypes && PO.supportedEntryTypes.indexOf('paint') >= 0) {
+    new PO(function (list) { if (list.getEntriesByName('first-contentful-paint').length) start(); }).observe({ type: 'paint', buffered: true });
+    setTimeout(start, 3000); // no paint entry (e.g. background tab)
+  } else addEventListener('load', start);
+})();
+</script>
+<!-- In the app script, hydrate instead of re-rendering, and only when the markup was rendered for this route:
+window.__boot = function () {
+  const root = document.getElementById('root'), app = h(App);
+  if (root.firstElementChild && root.dataset.route === currentRouteKey()) React.startTransition(() => ReactDOM.hydrateRoot(root, app));
+  else { root.textContent = ''; ReactDOM.createRoot(root).render(app); }
+};
+-->

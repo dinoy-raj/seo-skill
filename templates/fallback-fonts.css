@@ -1,0 +1,21 @@
+/* Metric-matched local fallbacks: the page paints at once in Arial sized like the web font, so the swap barely moves
+   anything (CLS 0.05 -> 0). Tune the percentages per font: screenshot the same text in the fallback and the web font,
+   overlay them, adjust size-adjust for width and the overrides for vertical position. Starting points below were for
+   Google Sans Flex. Tools: https://screenspan.net/fallback, @capsizecss/metrics, fontaine (Nuxt/Vite). */
+@font-face{font-family:'Sans Fallback';src:local('Arial'),local('Liberation Sans'),local('Helvetica');size-adjust:100.7%;ascent-override:95.9%;descent-override:28.4%;line-gap-override:0%}
+/* Bold display text (the hero heading) often needs its own face, sized to its capitals: */
+@font-face{font-family:'Hero Fallback';font-weight:700;src:local('Arial Bold'),local('Arial-BoldMT'),local('Liberation Sans Bold'),local('Helvetica Bold');size-adjust:96%;ascent-override:100.6%;descent-override:29.8%;line-gap-override:0%}
+
+body{font-family:'Google Sans Flex','Sans Fallback',system-ui,sans-serif}
+.hero h1{font-family:'Google Sans Flex','Hero Fallback',system-ui,sans-serif}
+
+/* Icon fonts with ligatures: hide icons while the font loads so names like "arrow_forward" never flash as text.
+   Pair with the inline script below in <head>. */
+html.fl .icon{color:transparent}
+/*
+<script>(function(d){var h=d.documentElement,f=d.fonts;if(!f||!f.load)return;h.classList.add('fl');function k(){h.classList.remove('fl')}f.load('24px "Material Symbols Rounded"').then(k,k);setTimeout(k,3000)})(document)</script>
+*/
+
+/* Visually hidden text for screen readers and crawlers (keep real words in headings; draw decoration with CSS). */
+.sr-only{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.icon::before{content:attr(data-icon)}

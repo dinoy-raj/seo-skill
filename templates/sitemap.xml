@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Generate this (scripts/prerender.js does) from the same route list as the pages. Only canonical, indexable, 200 URLs. -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <url>
+    <loc>https://example.com/</loc>
+    <lastmod>2026-01-01</lastmod>
+    <image:image><image:loc>https://example.com/assets/hero.jpg</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://example.com/about</loc>
+    <lastmod>2026-01-01</lastmod>
+  </url>
+</urlset>

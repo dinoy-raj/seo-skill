@@ -1,0 +1,26 @@
+# Jane Doe
+
+> One or two sentences an AI assistant can quote: who or what this is, what they do, what makes them distinct.
+
+Site: https://example.com/
+Based in Berlin, Germany.
+
+## Pages
+
+- [Home](https://example.com/): what is on it
+- [About](https://example.com/about): background, what they work on
+- [Projects](https://example.com/projects): every project, each with its own page (e.g. https://example.com/project-one)
+Contact: hello@example.com
+
+## Products
+
+- [Product One](https://example.com/product-one): one line on what it does. Store: https://...
+
+## Writing
+
+- [Post title](https://...) (Publication)
+
+## Elsewhere
+
+- [GitHub](https://github.com/...)
+- [LinkedIn](https://www.linkedin.com/in/...)
