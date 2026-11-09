@@ -1,5 +1,7 @@
+# robots.txt controls crawling, not indexing. Don't Disallow pages you want out of Google: send noindex
+# (meta robots or X-Robots-Tag) and let them be crawled, or the noindex is never seen.
+# Disallow only crawl waste, e.g. internal search results:  Disallow: /search
 User-agent: *
 Allow: /
-Disallow: /design/
 
 Sitemap: https://example.com/sitemap.xml

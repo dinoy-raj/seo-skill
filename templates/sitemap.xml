@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generate this (scripts/prerender.js does) from the same route list as the pages. Only canonical, indexable, 200 URLs. -->
+<!-- Generate this (scripts/prerender.js does) from the same route list as the pages. Only canonical, indexable, 200 URLs.
+     lastmod = the page's last significant change (not the build date). Google ignores priority and changefreq. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://example.com/</loc>

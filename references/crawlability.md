@@ -41,7 +41,9 @@ can optionally restrict the snapshot to a root element. Re-run it after every co
 - A hydration mismatch is a bug, not a warning: React discards the markup and redraws. Usual causes: pre-render is
   stale, dates/random values, `window` reads during render, whitespace inside the root.
 - Client-side navigation must keep `document.title`, the canonical `href` and the meta description in step with the
-  route, from the same `routeHead()` the pre-renderer used.
+  route, from the same `routeHead()` the pre-renderer used. On first load the server HTML already has the right
+  canonical; JS must not change it then (Google: "make sure that JavaScript doesn't change the canonical link element").
+- Mobile and desktop must get the same content, structured data and meta (mobile-first indexing).
 
 ## Heading and text hygiene
 
@@ -60,13 +62,21 @@ Crawlers index `textContent`. Things that look fine but read badly:
 
 ## Crawl files
 
-- `robots.txt` (`templates/robots.txt`): allow all, disallow build/design/tool folders, `Sitemap:` absolute URL.
-  Also send `X-Robots-Tag: noindex` for those folders, since robots.txt does not stop indexing of linked URLs.
-- `sitemap.xml` (`templates/sitemap.xml`): only canonical, indexable 200 URLs; `lastmod` as `YYYY-MM-DD`; an
-  `image:image` for the main image on the home page. Generate it with the pre-render so it can't drift.
-- `llms.txt` (`templates/llms.txt`): a plain markdown summary for AI assistants: who/what, key pages with one-line
-  descriptions, products, contact, profiles. Absolute URLs.
-- `404.html`: a real 404 status, `noindex`, a link home, inline CSS only.
+- `robots.txt` (`templates/robots.txt`): allow all and give the `Sitemap:` absolute URL. robots.txt controls crawling,
+  not indexing: a disallowed URL can still be indexed from links, and its `noindex` is never read. So **don't
+  `Disallow` folders you want out of the index**; send `X-Robots-Tag: noindex` (or meta robots) and let them be crawled.
+  Use `Disallow` only for crawl waste (internal search results, carts, endless filters). Google reads only
+  `user-agent`, `allow`, `disallow`, `sitemap` (no `crawl-delay`). Never block CSS/JS the page needs to render.
+- `sitemap.xml` (`templates/sitemap.xml`): only canonical, indexable 200 URLs; `lastmod` as `YYYY-MM-DD` and **true**:
+  the date of the last significant change to that page, not the build date (Google ignores `lastmod` that isn't
+  "consistently and verifiably accurate"). `priority` and `changefreq` are ignored, leave them out. Up to 50,000 URLs /
+  50 MB per file. `image:image` with `image:loc` is still supported (caption/title/license tags were dropped).
+  Generate it with the pre-render so it can't drift.
+- `llms.txt` (`templates/llms.txt`): optional. Google says AI Overviews and AI Mode need no special files or markup;
+  some other AI tools read it. A plain markdown summary: who/what, key pages, products, contact, profiles.
+- `404.html`: a real 404 status (that alone removes the URL from Google; `noindex` is optional), a link home, inline CSS.
+- Never ship `noindex` in the server HTML of a page you want indexed and remove it with JS: Google may not render it.
+- Routing by path with the History API; Google ignores `#fragment` routes.
 
 ## URLs and redirects
 
@@ -81,8 +91,12 @@ Crawlers index `textContent`. Things that look fine but read badly:
 
 ## Internal linking
 
+- Readable URLs with words and hyphens (`/talks/offline-rag-android`), not ids; paths are case-sensitive.
 - Every page reachable from plain `<a href>` links in nav or footer (a footer row linking every product page fixed
   pages that were only reachable through JS).
 - Descriptive anchor text ("Dino Minimalist Launcher"), not "click here"; give repeated links distinct accessible names.
 - Add hub pages (`/apps`, `/talks`, `/blog`) that list children, and child pages that link back (breadcrumbs).
-- Thin pages rank badly: a talk page with abstract, takeaways and events beats a card with a title.
+- Pages need real substance (Google has no word-count target, but a talk page with abstract, takeaways and events is
+  more useful than a card with a title).
+- Outbound links: `rel="sponsored"` for paid, `rel="ugc"` for user content, `nofollow` only for sources you don't trust.
+- Lazy-loaded content must load without clicks (Googlebot doesn't click or scroll); infinite scroll needs paginated URLs.

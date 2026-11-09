@@ -1,5 +1,7 @@
 # Jane Doe
 
+<!-- Optional. Google says AI Overviews and AI Mode need no special files; some other AI tools read llms.txt. Delete this comment. -->
+
 > One or two sentences an AI assistant can quote: who or what this is, what they do, what makes them distinct.
 
 Site: https://example.com/

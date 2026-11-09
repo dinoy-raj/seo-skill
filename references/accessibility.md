@@ -7,7 +7,7 @@ PageSpeed shows four scores; SEO work is judged with all of them. These are the 
 | `aria-prohibited-attr` / "elements use prohibited ARIA" | `aria-label` on `<p>`, `<div>`, `<span>` (not allowed on generic roles) | Put the text in a visually hidden `.sr-only` span; mark the decorative version `aria-hidden="true"` |
 | `label-content-name-mismatch` | `aria-label` on a link that doesn't contain its visible text (e.g. drops the subtitle) | Remove the `aria-label`, let the name come from visible text; or make the label start with the visible text |
 | `link-name` / identical links with different targets | Several "Google Play" / "Source" links | Per-item accessible names: `aria-label="Dino Launcher on Google Play"` (containing the visible text) |
-| `heading-order` | Footer headings jump h2 to h4 | Use the next level (h3); style with classes, not tag choice |
+| `heading-order` | Footer headings jump h2 to h4 | Use the next level (h3); style with classes, not tag choice. (An accessibility fix: Google says heading order doesn't matter for ranking.) |
 | `color-contrast` | Muted/"unlit" text, small labels on tinted backgrounds | Darken to at least 4.5:1 (3:1 for 24px+ or 18.66px bold); check every state, including animated "unlit" words |
 | `nested-interactive` / buttons in links | `<a><button>..</button></a>` | Style the link as a button; one interactive element |
 | `image-alt` | Missing `alt` | Meaningful `alt` for content images (`"App name: what the screenshot shows"`), `alt=""` for decorative ones |

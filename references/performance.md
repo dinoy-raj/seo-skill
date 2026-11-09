@@ -1,6 +1,9 @@
 # Page speed playbook (Core Web Vitals)
 
-Targets on mobile Lighthouse: LCP < 2.5 s (aim 1.5 s), FCP < 1.8 s (aim 1.2 s), CLS 0, TBT < 200 ms (aim 0).
+Google's Core Web Vitals "good" thresholds, measured on real users (field data: Search Console, PageSpeed Insights,
+CrUX): **LCP < 2.5 s, INP < 200 ms, CLS < 0.1**. These are what ranking systems use; Google says a perfect lab score
+isn't needed for SEO. Lab targets used here on mobile Lighthouse: LCP 1.5 s, FCP 1.2 s, CLS 0, TBT near 0 (TBT is the
+lab stand-in for INP: long main-thread tasks are what make interactions slow).
 Results from the original pass: FCP 1.8 s to 0.8-1.2 s, LCP 5.0 s to 1.5 s, CLS 0.05 to 0, page weight 3.7 MB to
 ~1.25 MB, performance 98-99 to 100 on every run.
 
@@ -57,7 +60,10 @@ element arrive sooner or stops something else from competing with it.
 ## 4. Other images
 
 - `srcset` + `sizes` with a half-size copy (e.g. `shot-270.webp 270w, shot.webp 540w`, `sizes="(max-width: 760px) 30vw, 210px"`).
-- `width` and `height` on every image (CLS), `loading="lazy"` and `decoding="async"` below the fold.
+- `width` and `height` on every image (CLS), `loading="lazy"` and `decoding="async"` below the fold (native lazy
+  loading is fine for Google; content that only loads on a click or scroll handler is not).
+- Content images as `<img>`/`<picture>` (Google doesn't index CSS background images), always with a `src` fallback,
+  descriptive `alt`, short descriptive file names.
 - Convert screenshots to WebP; strip metadata. Python: `Image.open(p).save(out, 'WEBP', quality=80, method=6)`.
 
 ## 5. CSS
@@ -90,7 +96,14 @@ element arrive sooner or stops something else from competing with it.
 - Compression (Brotli/gzip) and HTTP/2 or 3 come from the host; check they're on.
 - Remove what isn't used: unused JS bundles, polyfills, analytics loaded synchronously (load analytics after `load`).
 
-## 8. Measure
+## 8. Interaction (INP)
+
+- Keep event handlers short; move heavy work off the click path (`requestAnimationFrame`, `scheduler.yield()` /
+  `setTimeout` chunks, web workers).
+- Hydrate in a transition and avoid huge synchronous re-renders on input; virtualise long lists.
+- Measure with the `web-vitals` library or Chrome DevTools' Performance panel (interactions track), and in field data.
+
+## 9. Measure
 
 ```bash
 bash scripts/lighthouse.sh https://example.com/ 10

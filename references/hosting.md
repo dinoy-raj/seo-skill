@@ -9,7 +9,8 @@ What every host needs:
 5. Security headers (Lighthouse best practices): `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY` (or CSP
    `frame-ancestors`), `Referrer-Policy: strict-origin-when-cross-origin`, `Cross-Origin-Opener-Policy: same-origin`,
    and HSTS once HTTPS is settled (`Strict-Transport-Security: max-age=63072000; includeSubDomains; preload`).
-6. `X-Robots-Tag: noindex` on folders that are deployed but shouldn't be indexed (design, tools, drafts).
+6. `X-Robots-Tag: noindex` on folders that are deployed but shouldn't be indexed (design, tools, drafts), and **don't
+   also `Disallow` them in robots.txt**: Google can't read a noindex on a URL it isn't allowed to crawl.
 7. HTTPS with a valid certificate on both apex and www (otherwise the redirect itself errors).
 
 ## Vercel (`vercel.json`)
@@ -83,5 +84,8 @@ server {
 ## After deploy
 
 - `curl -sI` the apex, www, a deep route, `/index.html`, a missing page (see audit.md).
-- Google Search Console: verify the domain (DNS TXT), submit `sitemap.xml`, inspect and request indexing for the home
-  page and changed pages. Bing Webmaster Tools: import from Search Console.
+- Google Search Console: verify the domain (DNS TXT), submit `sitemap.xml` (or rely on the `Sitemap:` line in
+  robots.txt), use URL Inspection to see the rendered HTML, and request indexing for a few key pages (quota-limited;
+  repeating it doesn't help). Check Page indexing and Core Web Vitals reports after a few weeks. Bing Webmaster Tools:
+  import from Search Console.
+- Serve everything over HTTPS; keep robots.txt reachable (a 5xx on robots.txt pauses crawling).

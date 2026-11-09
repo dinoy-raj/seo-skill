@@ -4,7 +4,8 @@ A Claude skill that runs a full SEO and page-speed pass on a website: crawlable 
 schema.org structured data, sitemap/robots/llms.txt, favicons and social cards, and the Core Web Vitals work that takes
 mobile Lighthouse to 100 across performance, accessibility, best practices and SEO.
 
-It is distilled from the work on [dinoyraj.com](https://dinoyraj.com): mobile LCP 5.0 s to 1.5 s, FCP 1.8 s to 0.8-1.2 s,
+Checked against Google Search Central's documentation (see
+[`references/google-search-docs.md`](references/google-search-docs.md)). It is distilled from the work on [dinoyraj.com](https://dinoyraj.com): mobile LCP 5.0 s to 1.5 s, FCP 1.8 s to 0.8-1.2 s,
 CLS 0.05 to 0, page weight 3.7 MB to ~1.25 MB, every route indexable with its own head and JSON-LD.
 
 ## Install
@@ -40,7 +41,7 @@ accessibility and hosting, re-measuring as it goes, and reports before/after.
 | Path | Purpose |
 | --- | --- |
 | [`SKILL.md`](SKILL.md) | The workflow and the rules learned the hard way |
-| [`references/`](references) | Audit, crawlability, head metadata, structured data, performance, accessibility, hosting |
+| [`references/`](references) | Google Search Central summary (myths, rich result requirements), audit, crawlability, head metadata, structured data, performance, accessibility, hosting |
 | [`scripts/seo_audit.py`](scripts/seo_audit.py) | Static auditor for a build folder or live site (stdlib only) |
 | [`scripts/prerender.js`](scripts/prerender.js) | Playwright pre-renderer for any JS site, writes sitemap.xml |
 | [`scripts/subset_fonts.py`](scripts/subset_fonts.py) | Self-host and subset Google Fonts and Material Symbols |

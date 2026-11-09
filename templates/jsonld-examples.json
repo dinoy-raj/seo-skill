@@ -1,75 +1,268 @@
 {
-  "_comment": "Three complete graphs: a personal home page, a product (mobile app) page and a talk page. Generate these from page data with a routeJsonLd() function; don't hand-maintain them.",
-  "home": {
-    "@context": "https://schema.org",
-    "@graph": [
+ "_comment": "Three complete graphs: a personal home page, a product (mobile app) page and a talk page. Generate these from page data with a routeJsonLd() function; don't hand-maintain them. Full WebSite node only on the home page. The app node has offers and a rating because Google requires them for the Software app rich result: include aggregateRating only when it's a real rating shown on the page. Dates are full ISO 8601. The Event marks a speaking appearance; it links the person to the event but won't get an event rich result (those need a single-event page).",
+ "home": {
+  "@context": "https://schema.org",
+  "@graph": [
+   {
+    "@type": "Person",
+    "@id": "https://example.com/#person",
+    "name": "Jane Doe",
+    "alternateName": "Jane",
+    "givenName": "Jane",
+    "familyName": "Doe",
+    "url": "https://example.com/",
+    "image": "https://example.com/assets/jane.jpg",
+    "jobTitle": "Product Designer",
+    "description": "Product designer and speaker in Berlin who designs focused apps and design systems.",
+    "email": "mailto:hello@example.com",
+    "address": {
+     "@type": "PostalAddress",
+     "addressLocality": "Berlin",
+     "addressCountry": "DE"
+    },
+    "hasOccupation": {
+     "@type": "Occupation",
+     "name": "Product Designer",
+     "skills": "Figma, design systems, prototyping"
+    },
+    "knowsAbout": [
+     "Design systems",
+     "Prototyping",
+     "Accessibility"
+    ],
+    "sameAs": [
+     "https://github.com/janedoe",
+     "https://www.linkedin.com/in/janedoe",
+     "https://x.com/janedoe"
+    ],
+    "performerIn": [
+     {
+      "@id": "https://example.com/#event-designconf-2026-03-14"
+     }
+    ]
+   },
+   {
+    "@type": "WebSite",
+    "@id": "https://example.com/#website",
+    "url": "https://example.com/",
+    "name": "Jane Doe",
+    "alternateName": [
+     "Jane",
+     "example.com"
+    ],
+    "inLanguage": "en",
+    "publisher": {
+     "@id": "https://example.com/#person"
+    }
+   },
+   {
+    "@type": "ProfilePage",
+    "@id": "https://example.com/#profile",
+    "url": "https://example.com/",
+    "name": "Jane Doe | Product Designer & Speaker",
+    "description": "...",
+    "isPartOf": {
+     "@id": "https://example.com/#website"
+    },
+    "inLanguage": "en",
+    "mainEntity": {
+     "@id": "https://example.com/#person"
+    },
+    "primaryImageOfPage": "https://example.com/assets/og.jpg",
+    "hasPart": [
+     {
+      "@id": "https://example.com/#apps"
+     }
+    ]
+   },
+   {
+    "@type": "Event",
+    "@id": "https://example.com/#event-designconf-2026-03-14",
+    "name": "DesignConf Berlin",
+    "startDate": "2026-03-14",
+    "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+    "eventStatus": "https://schema.org/EventScheduled",
+    "location": {
+     "@type": "Place",
+     "name": "Berlin, Germany",
+     "address": "Example Venue, Berlin, Germany"
+    },
+    "performer": {
+     "@id": "https://example.com/#person"
+    },
+    "url": "https://designconf.example/"
+   },
+   {
+    "@type": "ItemList",
+    "@id": "https://example.com/#apps",
+    "name": "Apps by Jane Doe",
+    "url": "https://example.com/apps",
+    "itemListElement": [
+     {
+      "@type": "ListItem",
+      "position": 1,
+      "url": "https://example.com/focus",
+      "name": "Focus"
+     }
+    ]
+   },
+   {
+    "@type": "BlogPosting",
+    "@id": "https://medium.com/@janedoe/post",
+    "url": "https://medium.com/@janedoe/post",
+    "headline": "Post title",
+    "description": "One-line summary.",
+    "datePublished": "2025-06-10",
+    "author": {
+     "@id": "https://example.com/#person"
+    },
+    "publisher": {
+     "@type": "Organization",
+     "name": "Medium"
+    }
+   }
+  ]
+ },
+ "app": {
+  "@context": "https://schema.org",
+  "@graph": [
+   {
+    "@type": "Person",
+    "@id": "https://example.com/#person",
+    "name": "Jane Doe",
+    "url": "https://example.com/"
+   },
+   {
+    "@type": "MobileApplication",
+    "@id": "https://example.com/focus#app",
+    "name": "Focus",
+    "alternateName": "Focus: Pomodoro Timer",
+    "url": "https://example.com/focus",
+    "description": "A pomodoro timer for Android with ...",
+    "operatingSystem": "Android",
+    "applicationCategory": "ProductivityApplication",
+    "image": "https://example.com/assets/apps/focus-icon.webp",
+    "screenshot": [
+     "https://example.com/assets/apps/focus-1.webp"
+    ],
+    "author": {
+     "@id": "https://example.com/#person"
+    },
+    "publisher": {
+     "@id": "https://example.com/#person"
+    },
+    "keywords": "pomodoro, focus timer, productivity",
+    "installUrl": "https://play.google.com/store/apps/details?id=com.example.focus",
+    "downloadUrl": "https://play.google.com/store/apps/details?id=com.example.focus",
+    "sameAs": [
+     "https://play.google.com/store/apps/details?id=com.example.focus",
+     "https://github.com/janedoe/focus"
+    ],
+    "offers": {
+     "@type": "Offer",
+     "price": 0,
+     "priceCurrency": "USD"
+    },
+    "aggregateRating": {
+     "@type": "AggregateRating",
+     "ratingValue": 4.6,
+     "ratingCount": 120
+    }
+   },
+   {
+    "@type": "WebPage",
+    "@id": "https://example.com/focus#page",
+    "url": "https://example.com/focus",
+    "name": "Focus: Pomodoro Timer for Android | Jane Doe",
+    "description": "...",
+    "isPartOf": {
+     "@id": "https://example.com/#website"
+    },
+    "inLanguage": "en",
+    "mainEntity": {
+     "@id": "https://example.com/focus#app"
+    },
+    "breadcrumb": {
+     "@type": "BreadcrumbList",
+     "itemListElement": [
       {
-        "@type": "Person", "@id": "https://example.com/#person", "name": "Jane Doe", "alternateName": "Jane",
-        "givenName": "Jane", "familyName": "Doe", "url": "https://example.com/", "image": "https://example.com/assets/jane.jpg",
-        "jobTitle": "Product Designer", "description": "Product designer and speaker in Berlin who designs focused apps and design systems.",
-        "email": "mailto:hello@example.com",
-        "address": { "@type": "PostalAddress", "addressLocality": "Berlin", "addressCountry": "DE" },
-        "hasOccupation": { "@type": "Occupation", "name": "Product Designer", "skills": "Figma, design systems, prototyping" },
-        "knowsAbout": ["Design systems", "Prototyping", "Accessibility"],
-        "sameAs": ["https://github.com/janedoe", "https://www.linkedin.com/in/janedoe", "https://x.com/janedoe"],
-        "performerIn": [{ "@id": "https://example.com/#event-designconf-2026-03" }]
+       "@type": "ListItem",
+       "position": 1,
+       "name": "Jane Doe",
+       "item": "https://example.com/"
       },
-      { "@type": "WebSite", "@id": "https://example.com/#website", "url": "https://example.com/", "name": "Jane Doe",
-        "alternateName": ["Jane", "example.com"], "inLanguage": "en", "publisher": { "@id": "https://example.com/#person" } },
-      { "@type": "ProfilePage", "@id": "https://example.com/#profile", "url": "https://example.com/", "name": "Jane Doe | Product Designer & Speaker",
-        "description": "...", "isPartOf": { "@id": "https://example.com/#website" }, "inLanguage": "en",
-        "mainEntity": { "@id": "https://example.com/#person" }, "primaryImageOfPage": "https://example.com/assets/og.jpg",
-        "hasPart": [{ "@id": "https://example.com/#apps" }] },
-      { "@type": "Event", "@id": "https://example.com/#event-designconf-2026-03", "name": "DesignConf Berlin", "startDate": "2026-03",
-        "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode", "eventStatus": "https://schema.org/EventScheduled",
-        "location": { "@type": "Place", "name": "Berlin, Germany", "address": "Example Venue, Berlin, Germany" },
-        "performer": { "@id": "https://example.com/#person" }, "url": "https://designconf.example/" },
-      { "@type": "ItemList", "@id": "https://example.com/#apps", "name": "Apps by Jane Doe", "url": "https://example.com/apps",
-        "itemListElement": [{ "@type": "ListItem", "position": 1, "url": "https://example.com/focus", "name": "Focus" }] },
-      { "@type": "BlogPosting", "@id": "https://medium.com/@janedoe/post", "url": "https://medium.com/@janedoe/post",
-        "headline": "Post title", "description": "One-line summary.", "datePublished": "2025-06",
-        "author": { "@id": "https://example.com/#person" }, "publisher": { "@type": "Organization", "name": "Medium" } }
-    ]
-  },
-  "app": {
-    "@context": "https://schema.org",
-    "@graph": [
-      { "@type": "Person", "@id": "https://example.com/#person", "name": "Jane Doe", "url": "https://example.com/" },
-      { "@type": "WebSite", "@id": "https://example.com/#website", "url": "https://example.com/", "name": "Jane Doe" },
       {
-        "@type": "MobileApplication", "@id": "https://example.com/focus#app", "name": "Focus", "alternateName": "Focus: Pomodoro Timer",
-        "url": "https://example.com/focus", "description": "A pomodoro timer for Android with ...", "operatingSystem": "Android",
-        "applicationCategory": "ProductivityApplication", "image": "https://example.com/assets/apps/focus-icon.webp",
-        "screenshot": ["https://example.com/assets/apps/focus-1.webp"],
-        "author": { "@id": "https://example.com/#person" }, "publisher": { "@id": "https://example.com/#person" },
-        "keywords": "pomodoro, focus timer, productivity",
-        "installUrl": "https://play.google.com/store/apps/details?id=com.example.focus",
-        "downloadUrl": "https://play.google.com/store/apps/details?id=com.example.focus",
-        "sameAs": ["https://play.google.com/store/apps/details?id=com.example.focus", "https://github.com/janedoe/focus"]
+       "@type": "ListItem",
+       "position": 2,
+       "name": "Apps",
+       "item": "https://example.com/apps"
       },
-      { "@type": "WebPage", "@id": "https://example.com/focus#page", "url": "https://example.com/focus", "name": "Focus: Pomodoro Timer for Android | Jane Doe",
-        "description": "...", "isPartOf": { "@id": "https://example.com/#website" }, "inLanguage": "en",
-        "mainEntity": { "@id": "https://example.com/focus#app" },
-        "breadcrumb": { "@type": "BreadcrumbList", "itemListElement": [
-          { "@type": "ListItem", "position": 1, "name": "Jane Doe", "item": "https://example.com/" },
-          { "@type": "ListItem", "position": 2, "name": "Apps", "item": "https://example.com/apps" },
-          { "@type": "ListItem", "position": 3, "name": "Focus", "item": "https://example.com/focus" } ] } }
-    ]
-  },
-  "talk": {
-    "@context": "https://schema.org",
-    "@graph": [
-      { "@type": "Person", "@id": "https://example.com/#person", "name": "Jane Doe", "url": "https://example.com/" },
-      { "@type": "WebSite", "@id": "https://example.com/#website", "url": "https://example.com/", "name": "Jane Doe" },
-      { "@type": "WebPage", "@id": "https://example.com/talks/prototyping#page", "url": "https://example.com/talks/prototyping",
-        "name": "Prototyping at speed | Jane Doe", "description": "...", "isPartOf": { "@id": "https://example.com/#website" }, "inLanguage": "en",
-        "mainEntity": { "@type": "CreativeWork", "@id": "https://example.com/talks/prototyping#talk", "url": "https://example.com/talks/prototyping",
-          "name": "Prototyping at speed", "abstract": "Full abstract text...", "author": { "@id": "https://example.com/#person" },
-          "inLanguage": "en", "keywords": "prototyping, Figma, user testing" },
-        "breadcrumb": { "@type": "BreadcrumbList", "itemListElement": [
-          { "@type": "ListItem", "position": 1, "name": "Jane Doe", "item": "https://example.com/" },
-          { "@type": "ListItem", "position": 2, "name": "Talks", "item": "https://example.com/talks" },
-          { "@type": "ListItem", "position": 3, "name": "Prototyping at speed", "item": "https://example.com/talks/prototyping" } ] } }
-    ]
-  }
+      {
+       "@type": "ListItem",
+       "position": 3,
+       "name": "Focus",
+       "item": "https://example.com/focus"
+      }
+     ]
+    }
+   }
+  ]
+ },
+ "talk": {
+  "@context": "https://schema.org",
+  "@graph": [
+   {
+    "@type": "Person",
+    "@id": "https://example.com/#person",
+    "name": "Jane Doe",
+    "url": "https://example.com/"
+   },
+   {
+    "@type": "WebPage",
+    "@id": "https://example.com/talks/prototyping#page",
+    "url": "https://example.com/talks/prototyping",
+    "name": "Prototyping at speed | Jane Doe",
+    "description": "...",
+    "isPartOf": {
+     "@id": "https://example.com/#website"
+    },
+    "inLanguage": "en",
+    "mainEntity": {
+     "@type": "CreativeWork",
+     "@id": "https://example.com/talks/prototyping#talk",
+     "url": "https://example.com/talks/prototyping",
+     "name": "Prototyping at speed",
+     "abstract": "Full abstract text...",
+     "author": {
+      "@id": "https://example.com/#person"
+     },
+     "inLanguage": "en",
+     "keywords": "prototyping, Figma, user testing"
+    },
+    "breadcrumb": {
+     "@type": "BreadcrumbList",
+     "itemListElement": [
+      {
+       "@type": "ListItem",
+       "position": 1,
+       "name": "Jane Doe",
+       "item": "https://example.com/"
+      },
+      {
+       "@type": "ListItem",
+       "position": 2,
+       "name": "Talks",
+       "item": "https://example.com/talks"
+      },
+      {
+       "@type": "ListItem",
+       "position": 3,
+       "name": "Prototyping at speed",
+       "item": "https://example.com/talks/prototyping"
+      }
+     ]
+    }
+   }
+  ]
+ }
 }

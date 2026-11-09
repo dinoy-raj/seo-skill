@@ -114,16 +114,20 @@ function between(src, start, end, body) {
     if (route !== '/') out = out.replace(/^<!doctype html>\n/i, m => m + GENERATED + '\n');
     const dest = route === '/' ? file : path.join(ROOT, route.slice(1) + '.html');
     fs.mkdirSync(path.dirname(dest), { recursive: true });
+    const changed = !fs.existsSync(dest) || fs.readFileSync(dest, 'utf8') !== out; // keeps lastmod honest (see below)
     fs.writeFileSync(dest, out);
-    pages.push({ route, head: r.head });
+    pages.push({ route, head: r.head, changed });
     console.log('Pre-rendered ' + route + ' (' + r.markup.length + ' characters) -> ' + path.relative(ROOT, dest));
   }
   await b.close();
 
-  const today = new Date().toISOString().slice(0, 10);
-  const urls = pages.filter(x => x.head.index !== false).map(({ route }) => `  <url>
+  // Google uses lastmod only when it's accurate, so an unchanged page keeps the date from the previous sitemap.
+  const today = new Date().toISOString().slice(0, 10), prev = {};
+  const old = path.join(ROOT, 'sitemap.xml');
+  if (fs.existsSync(old)) for (const m of fs.readFileSync(old, 'utf8').matchAll(/<loc>([^<]+)<\/loc>\s*<lastmod>([^<]+)<\/lastmod>/g)) prev[m[1]] = m[2];
+  const urls = pages.filter(x => x.head.index !== false).map(({ route, changed }) => `  <url>
     <loc>${SITE + route}</loc>
-    <lastmod>${today}</lastmod>${route === '/' ? '\n    <image:image><image:loc>' + SITE + '/assets/dinoy.jpg</image:loc></image:image>' : ''}
+    <lastmod>${!changed && prev[SITE + route] ? prev[SITE + route] : today}</lastmod>${route === '/' ? '\n    <image:image><image:loc>' + SITE + '/assets/dinoy.jpg</image:loc></image:image>' : ''}
   </url>`);
   fs.writeFileSync(path.join(ROOT, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">

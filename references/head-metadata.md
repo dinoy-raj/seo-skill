@@ -21,15 +21,20 @@ Fields: `path` (canonical path), `title`, `desc`, optional `social` (OG/Twitter 
 
 ## Titles
 
-- Unique per page, about 50-60 characters, most specific words first: `Talk title | Brand`, `Product: what it does | Brand`.
+- Unique per page and descriptive. Google sets no length limit; it truncates to the device width, so about 50-60
+  characters is what shows. Most specific words first: `Talk title | Brand`, `Product: what it does | Brand`.
 - Home: `Name | Role & Role` or `Brand | What it is`. Use the job title the person actually uses (don't upgrade
   "Android Developer" to "Product Engineer" unless asked).
 - Put the platform in when people search for it ("... for Android"), without doubling it ("Android launcher for Android").
 - Legal pages: `Privacy policy · Product`, `noindex, follow`.
+- Avoid what makes Google rewrite titles: the same boilerplate on every page, half-empty titles ("| Brand"), old years,
+  a title that doesn't match the page's main heading, the site name twice.
+- No `<meta name="keywords">`: Google doesn't use it.
 
 ## Descriptions
 
-- 140-160 characters, a plain sentence naming the who/what/where: "Jane Doe is a product designer in Berlin who ...".
+- No length limit (it's truncated to fit; about 150-160 characters shows). Google often writes the snippet from page
+  text and uses the description when it's more accurate, so make it a plain, accurate sentence naming the who/what/where: "Jane Doe is a product designer in Berlin who ...".
 - Write a separate `seo` text when the on-page copy relies on context ("Several of the apps below began as tools
   inside it." reads oddly in a result). Use it for the meta description and JSON-LD; leave the page copy alone.
 - Include location for people/local businesses ("Thiruvananthapuram, Kerala, India") on the about page.
@@ -75,14 +80,17 @@ Set all of them explicitly; X does not reliably fall back to OG for title/descri
 <meta name="twitter:image" content="https://example.com/assets/og.jpg"> <meta name="twitter:image:alt" content="...">
 ```
 
-Social image: 1200x630 JPEG under ~300 KB, text large enough to read at 600 px wide, absolute URL. Per-page images
+Social image: 1200x630 JPEG under ~300 KB, text large enough to read at 600 px wide, absolute URL. Google may use
+`og:image` to choose the page's image in results, so keep it representative of the page, not a generic logo. Per-page images
 are better when the pages are products/posts; one site card is fine otherwise. `scripts/make_icons.py --og` builds a
 simple one from a photo and a name.
 
 ## Favicons that Google shows in results
 
-Google needs a square favicon whose size is a multiple of 48 px and that is crawlable. An SVG letter tile often gets
-ignored; a 192x192 PNG works.
+Google's requirements: square, at least 8x8 px (larger than 48x48 recommended; 192x192 is a good size), a supported
+format (BMP, GIF, ICO, PNG, JPEG; SVG is not on the list, so always provide a PNG/ICO), linked with `rel="icon"` from
+the home page, one per hostname, a stable URL, and neither the home page nor the icon blocked by robots.txt. It can take
+days to weeks to update, and isn't guaranteed to show.
 
 ```html
 <link rel="icon" href="/favicon-192.png" type="image/png" sizes="192x192">
@@ -92,6 +100,12 @@ ignored; a 192x192 PNG works.
 
 `python3 scripts/make_icons.py photo.jpg --out .` writes all three from one image (center square crop). For a personal
 site, the person's face as favicon helps recognition in results.
+
+## Snippet and AI controls
+
+`nosnippet`, `max-snippet:N`, `max-image-preview:large|standard|none` in meta robots; `data-nosnippet` on
+`span`/`div`/`section` (not added by JS). `nosnippet` also keeps text out of AI Overviews and AI Mode. `Google-Extended`
+in robots.txt opts out of Gemini training and grounding without affecting Search.
 
 ## Keep it in sync on client navigation
 

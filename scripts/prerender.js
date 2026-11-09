@@ -126,8 +126,10 @@ const routeFile = (o, route) => route === '/' ? path.join(o.out, 'index.html')
     if (route !== '/') out = out.replace(/^<!doctype html>\n?/i, m => m.trimEnd() + '\n' + GENERATED + '\n');
     const dest = routeFile(o, route);
     fs.mkdirSync(path.dirname(dest), { recursive: true });
+    // Unchanged pages keep their previous sitemap lastmod: Google only trusts lastmod that reflects real changes.
+    const changed = !fs.existsSync(dest) || fs.readFileSync(dest, 'utf8') !== out;
     fs.writeFileSync(dest, out);
-    done.push({ route, noindex: /noindex/i.test(r.robots), canonical: r.canonical });
+    done.push({ route, changed, noindex: /noindex/i.test(r.robots), canonical: r.canonical });
     console.log(`Pre-rendered ${route} -> ${path.relative(process.cwd(), dest)} (${out.length} chars, "${r.title}")`);
     if (r.canonical && o.site && r.canonical.replace(/\/$/, '') !== (o.site + route).replace(/\/$/, ''))
       console.warn(`  warning: canonical ${r.canonical} differs from ${o.site + route}`);
@@ -143,8 +145,11 @@ const routeFile = (o, route) => route === '/' ? path.join(o.out, 'index.html')
 
   if (o.sitemap) {
     if (!o.site) { console.warn('No --site given: sitemap.xml not written'); return; }
-    const today = new Date().toISOString().slice(0, 10);
-    const urls = done.filter(x => !x.noindex).map(x => `  <url>\n    <loc>${o.site}${x.route === '/' ? '/' : x.route}</loc>\n    <lastmod>${today}</lastmod>\n  </url>`);
+    const today = new Date().toISOString().slice(0, 10), prev = {};
+    const old = path.join(o.out, 'sitemap.xml');
+    if (fs.existsSync(old)) for (const m of fs.readFileSync(old, 'utf8').matchAll(/<loc>([^<]+)<\/loc>\s*<lastmod>([^<]+)<\/lastmod>/g)) prev[m[1]] = m[2];
+    const loc = x => o.site + (x.route === '/' ? '/' : x.route);
+    const urls = done.filter(x => !x.noindex).map(x => `  <url>\n    <loc>${loc(x)}</loc>\n    <lastmod>${!x.changed && prev[loc(x)] ? prev[loc(x)] : today}</lastmod>\n  </url>`);
     fs.writeFileSync(path.join(o.out, 'sitemap.xml'),
       `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.join('\n')}\n</urlset>\n`);
     console.log(`Wrote sitemap.xml with ${urls.length} URLs (${done.length - urls.length} noindex pages left out)`);
